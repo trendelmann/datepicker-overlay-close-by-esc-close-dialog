@@ -61,7 +61,7 @@ unexpected side effects.
 
 	}
 	
-	// Test issue: closing DatePicker overlay by "ESC" also closes our Window;
+	// Test the issue: closing DatePicker overlay by "ESC" also closes our Window;
 	// here we check if it also happens with the native Vaadin-Dialog.
 	private void openNativeDialogWithDateField() {
 		var nativeDialog = new Dialog();
