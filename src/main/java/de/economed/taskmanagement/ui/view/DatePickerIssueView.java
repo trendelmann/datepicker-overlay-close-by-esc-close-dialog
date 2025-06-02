@@ -2,7 +2,6 @@ package de.economed.taskmanagement.ui.view;
 
 import de.economed.base.ui.component.ViewToolbar;
 
-import java.time.LocalDate;
 import jakarta.annotation.security.PermitAll;
 
 import com.vaadin.flow.component.Html;
@@ -11,14 +10,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Hr;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.Result;
-import com.vaadin.flow.data.binder.ValidationResult;
-import com.vaadin.flow.data.binder.ValueContext;
-import com.vaadin.flow.data.validator.AbstractValidator;
 import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -34,7 +25,7 @@ public class DatePickerIssueView extends Div {
 	private static final String issuesDesc = """
 <div>
 <h3>Description</h3>
-We use the Vaadin Dialog to create kind of a resizable <tt>Window</tt> with a title bar and a max/min button
+We use the Vaadin Dialog to create kind of a resizable <code>Window</code> with a title bar and a max/min button
 together with a close button to allow users to control that like a Window in Microsoft Windows.
 <h3>Issue</h3>
 There is now a problem, if the user press <code>ESC</code> button if the DatePicker's day selection overlay is shown where
