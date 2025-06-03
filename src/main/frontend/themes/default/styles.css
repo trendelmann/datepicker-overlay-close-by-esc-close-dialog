@@ -1,0 +1,6 @@
+/* aus https://git.economed.de:44342/Economed/economed24/issues/215 */
+vaadin-month-calendar::part(today date)::after {
+    content: '\2022';
+    display: block;
+    font-size: 18px;
+}

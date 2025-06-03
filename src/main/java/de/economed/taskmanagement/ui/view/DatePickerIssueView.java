@@ -7,6 +7,7 @@ import jakarta.annotation.security.PermitAll;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
@@ -46,20 +47,27 @@ unexpected side effects.
 		add(new ViewToolbar( "Date Picker Overlay Issue" ));
 		add(new Html(issuesDesc));
 		
-		var openDialogButton = new Button("Open Vaadin-Dialog...", e -> openNativeDialogWithDateField());
-		openDialogButton.setMaxWidth( "200px" );
+		var openDialogButton = new Button("Open Vaadin-Dialog (bad!)...", e -> openNativeDialogWithDateFieldBad());
+		openDialogButton.setMaxWidth( "250px" );
+		add( openDialogButton );
+		
+		openDialogButton = new Button("Open Vaadin-Dialog (good?)...", e -> openNativeDialogWithDateFieldGood());
+		openDialogButton.setMaxWidth( "250px" );
 		add( openDialogButton );
 
 	}
 	
 	// Test the issue: closing DatePicker overlay by "ESC" also closes our Window;
-	// here we check if it also happens with the native Vaadin-Dialog.
-	private void openNativeDialogWithDateField() {
+	// it also happens with the native Vaadin-Dialog, and this is the naive first attempt
+	// to get it work the way we like to use it (prevent closing, if user decides)
+	private void openNativeDialogWithDateFieldBad() {
 		var nativeDialog = new Dialog();
+		var date = new DatePicker("date-picker" );
+		date.setRequiredIndicatorVisible( true );
 		var closeButton = new Button( "Close (click or press ESC)", e -> nativeDialog.close());
 		closeButton.addClickShortcut( Key.ESCAPE );
 		nativeDialog.add(
-				new DatePicker("date-picker" ),
+				date,
 				closeButton
 		);
 		nativeDialog.setHeaderTitle( "Open the date select overlay, then press ESC" );
@@ -71,6 +79,40 @@ unexpected side effects.
 		nativeDialog.setResizable( true );
 		nativeDialog.setDraggable( true );
 		nativeDialog.open();
+	}
+	
+	// Test the issue: closing DatePicker overlay by "ESC" also closes our Window;
+	// it also happens with the native Vaadin-Dialog, and this is the naive first attempt
+	// to get it work the way we like to use it (prevent closing, if user decides)
+	private void openNativeDialogWithDateFieldGood() {
+		var nativeDialog = new Dialog();
+		var date = new DatePicker("date-picker" );
+		date.setRequiredIndicatorVisible( true );
+		var closeButton = new Button( "Close (click or press ESC)", e -> askYesNoThenClose(nativeDialog));
+		//closeButton.addClickShortcut( Key.ESCAPE ); // not working - italso gets ESC from DatePicker overlay
+		nativeDialog.add(
+				date,
+				closeButton
+		);
+		nativeDialog.addDialogCloseActionListener( e -> askYesNoThenClose(e.getSource()) );
+		nativeDialog.setHeaderTitle( "Open the date select overlay, then press ESC" );
+		nativeDialog.setMinWidth( "410px" );
+		nativeDialog.setMinHeight( "220px" );
+		nativeDialog.setModal( true );
+		nativeDialog.setCloseOnEsc( true );				// !!! close only per custom button
+		nativeDialog.setCloseOnOutsideClick( true );	// !!! close only per custom button
+		nativeDialog.setResizable( true );
+		nativeDialog.setDraggable( true );
+		nativeDialog.open();
+	}
+	
+	private void askYesNoThenClose(Dialog owner) {
+		var ask = new ConfirmDialog("Closing...",
+									"Really wanna close this?",
+									"Yes, please", e -> owner.close() );
+		ask.setCancelable( true );
+		ask.setCancelButton( "No no no...", e -> e.getSource().close() );
+		ask.open();
 	}
 	
 }
